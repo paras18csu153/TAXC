@@ -83,10 +83,24 @@ userSchema.pre('save', function (next) {
     next();
 });
 
-module.exports = mongoose.model('User', userSchema);
+var User = (module.exports = mongoose.model('User', userSchema));
 
 // Create User
 module.exports.create = async (user) => {
     user = await user.save();
+    return user;
+}
+
+// Find user by username, phone or email
+module.exports.getByUsernamePhoneEmail = async (user) => {
+    user = await User.findOne({
+        $or: [{
+            username: user.username
+        }, {
+            phone: user.phone
+        }, {
+            email: user.email
+        }]
+    });
     return user;
 }
