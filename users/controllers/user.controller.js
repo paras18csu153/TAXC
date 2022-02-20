@@ -13,21 +13,21 @@ exports.register = async (req, res) => {
         if (!!existingUser) {
             if (existingUser.username == user.username) {
                 return res.status(409).send({
-                    message: 'Username already exists'
+                    message: 'Username already exists.'
                 });
             } else if (existingUser.email == user.email) {
                 return res.status(409).send({
-                    message: 'Email already exists'
+                    message: 'Email already exists.'
                 });
             } else {
                 return res.status(409).send({
-                    message: 'Phone already exists'
+                    message: 'Phone already exists.'
                 });
             }
         }
     } catch (e) {
         return res.status(500).send({
-            message: 'Internal Server Error'
+            message: 'Internal Server Error.'
         });
     }
 
@@ -42,7 +42,7 @@ exports.register = async (req, res) => {
             });
         } else {
             return res.status(500).send({
-                message: 'Internal Server Error'
+                message: 'Internal Server Error.'
             });
         }
     }

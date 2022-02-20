@@ -6,7 +6,7 @@ var Schema = mongoose.Schema;
 
 const {
     ObjectId
-} = mongoose.Schema.Types;
+} = Schema.Types;
 
 let userSchema = new Schema({
     name: {
