@@ -10,8 +10,7 @@ let phoneverificationcodeSchema = new Schema({
             },
             message: props => `${props.value} is not a valid phone number`
         },
-        required: [true, 'Phone Number is required.'],
-        unique: [true, 'Phone Number must be unique']
+        required: [true, 'Phone Number is required.']
     },
     otp: {
         type: String,

@@ -10,13 +10,13 @@ exports.create = async (req, res) => {
     // Convert request body to token
     var token = req.body;
 
-    if (!!!token.secret || hashString(secret) != token.secret) {
-        return res.status(403).send({
+    if (!token.secret || hashString(secret) != token.secret) {
+        return res.status(401).send({
             message: 'Unauthorized Access.'
         });
     }
 
-    if (!!!token.username) {
+    if (!token.username) {
         return res.status(400).send({
             message: 'Username is required.'
         });

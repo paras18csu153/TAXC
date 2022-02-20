@@ -1,4 +1,5 @@
 const axios = require('axios');
+const PasswordHash = require('password-hash');
 
 const User = require('../models/user.model');
 
@@ -93,4 +94,88 @@ exports.register = async (req, res) => {
 
     res.header('Authorization', token);
     return res.status(200).send(user);
+}
+
+// User Login
+exports.login = async (req, res) => {
+    // Convert request body to user
+    var user = req.body;
+
+    // Data Validation
+    if (!user.username) {
+        return res.status(400).send({
+            message: 'Username is required.'
+        });
+    }
+
+    if (!user.password) {
+        return res.status(400).send({
+            message: 'Password is required.'
+        });
+    }
+
+    // Check if user already exists
+    try {
+        var existingUser = await User.getByUsernamePhoneEmail(user);
+        if (!!!existingUser) {
+            return res.status(404).send({
+                message: 'User not found.'
+            });
+        }
+    } catch (e) {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    }
+
+    // Check Login Credentials
+    if (!PasswordHash.verify(user.password, existingUser.password)) {
+        return res.status(401).send({
+            message: 'Unauthorized Access.'
+        });
+    }
+
+    if (!existingUser.phoneVerified) {
+        // Send Verification Message
+        try {
+            sendOtpToPhone(existingUser);
+        } catch (err) {
+            return res.status(500).send({
+                message: 'Internal Server Error!!',
+            });
+        }
+    }
+
+    if (!existingUser.emailVerified) {
+        // Send Verification Mail
+        try {
+            sendVerificationMail(existingUser);
+        } catch (err) {
+            return res.status(500).send({
+                message: 'Internal Server Error!!',
+            });
+        }
+    }
+
+    // Request for Token Service
+    var req_body = {
+        'secret': secret,
+        'username': existingUser.username,
+        'user_id': existingUser._id
+    }
+
+    // Hash Secret
+    req_body.secret = hashString(req_body.secret);
+
+    // Token Genration
+    var token_service = await axios.post(token_service_url, req_body).catch((err) => {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    });
+
+    var token = token_service.data.token;
+
+    res.header('Authorization', token);
+    return res.status(200).send(existingUser);
 }
