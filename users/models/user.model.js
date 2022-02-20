@@ -57,7 +57,12 @@ let userSchema = new Schema({
         enum: ['DRIVER', 'USER'],
         required: [true, 'Type is required.']
     },
-    verified: {
+    phoneVerified: {
+        type: Boolean,
+        enum: ['false'],
+        default: false
+    },
+    emailVerified: {
         type: Boolean,
         enum: ['false'],
         default: false
