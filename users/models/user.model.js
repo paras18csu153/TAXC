@@ -35,7 +35,7 @@ let userSchema = new Schema({
         type: String,
         validate: {
             validator: function (v) {
-                return new RegExp('^[0-9]{10}$').test(v);
+                return new RegExp('^(?:(?:\\+|0{0,2})91(\\s*[\\-]\\s*)?|[0]?)?[789]\\d{9}$').test(v);
             },
             message: props => `${props.value} is not a valid phone number`
         },

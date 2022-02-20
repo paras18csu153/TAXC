@@ -15,7 +15,9 @@
     "http-errors": "~1.6.3",
     "mongoose": "^6.2.2",
     "morgan": "~1.9.1",
+    "otp-generator": "^4.0.0",
     "password-hash": "^1.2.2",
+    "twilio": "^3.74.0",
     "validator": "^13.7.0"
   }
 }
