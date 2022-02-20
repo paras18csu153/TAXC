@@ -1,6 +1,11 @@
+const axios = require('axios');
+
 const User = require('../models/user.model');
 
 const capitalizeFirstLetter = require('../helpers/capitalizeFirstLetter');
+
+const secret = process.env.SECRET;
+const token_service_url = process.env.TOKEN_SERVICE_URL;
 
 // Create User
 exports.register = async (req, res) => {
@@ -47,5 +52,21 @@ exports.register = async (req, res) => {
         }
     }
 
+    var req_body = {
+        'secret': secret,
+        'username': user.username,
+        'user_id': user._id
+    }
+
+    // Token Genration
+    var token_service = await axios.post(token_service_url, req_body).catch((err) => {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    });
+
+    var token = token_service.data.token;
+
+    res.header('Authorization', token);
     return res.status(200).send(user);
 }
