@@ -2,7 +2,7 @@ const axios = require('axios');
 
 const User = require('../models/user.model');
 
-const capitalizeFirstLetter = require('../helpers/capitalizeFirstLetter');
+const hashString = require('../helpers/hashString');
 
 const secret = process.env.SECRET;
 const token_service_url = process.env.TOKEN_SERVICE_URL;
@@ -57,6 +57,9 @@ exports.register = async (req, res) => {
         'username': user.username,
         'user_id': user._id
     }
+
+    // Hash Secret
+    req_body.secret = hashString(req_body.secret);
 
     // Token Genration
     var token_service = await axios.post(token_service_url, req_body).catch((err) => {
