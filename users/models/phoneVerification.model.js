@@ -23,7 +23,7 @@ let phoneverificationcodeSchema = new Schema({
         },
         required: [true, 'OTP is required.'],
         unique: [true, 'OTP must be unique']
-    },
+    }
 }, {
     timestamps: true
 });

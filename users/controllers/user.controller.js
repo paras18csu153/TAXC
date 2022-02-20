@@ -4,6 +4,7 @@ const User = require('../models/user.model');
 
 const hashString = require('../helpers/hashString');
 const sendOtpToPhone = require('../helpers/sendOTPToPhone');
+const sendVerificationMail = require('../helpers/sendVerificationMail');
 
 const secret = process.env.SECRET;
 const token_service_url = process.env.TOKEN_SERVICE_URL;
@@ -56,6 +57,15 @@ exports.register = async (req, res) => {
     // Send Verification Message
     try {
         sendOtpToPhone(user);
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error!!',
+        });
+    }
+
+    // Send Verification Mail
+    try {
+        sendVerificationMail(user);
     } catch (err) {
         return res.status(500).send({
             message: 'Internal Server Error!!',

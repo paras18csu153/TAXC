@@ -1,6 +1,6 @@
 const otpGenerator = require('otp-generator');
 
-var PhoneVerificationcode = require('../models/phoneVerification.model');
+var PhoneVerificationCode = require('../models/phoneVerification.model');
 
 async function sendOtpToPhone(user) {
     if (!user.verified) {
@@ -24,12 +24,12 @@ async function sendOtpToPhone(user) {
             .then(message => console.log(message.sid))
             .done();
 
-        var verification_code = new PhoneVerificationcode({
+        var verification_code = new PhoneVerificationCode({
             phone: user.phone,
             otp: r
         });
 
-        verification_code = await PhoneVerificationcode.create(verification_code);
+        verification_code = await PhoneVerificationCode.create(verification_code);
         console.log('Redirecting to verification page!!');
     }
 }
