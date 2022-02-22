@@ -39,7 +39,11 @@ async function sendVerificationMail(host_url, user) {
         verification_link: hash,
     });
 
-    verification = await MailVerificationCode.create(verification);
+    var existing_verification = await MailVerificationCode.findByVerificationLink(verification.verification_link);
+
+    if (!!!existing_verification) {
+        verification = await MailVerificationCode.create(verification)
+    };
 }
 
 module.exports = sendVerificationMail;
