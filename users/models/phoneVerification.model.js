@@ -27,10 +27,24 @@ let phoneverificationcodeSchema = new Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('PhoneVerificationCode', phoneverificationcodeSchema);
+var PhoneVerification = (module.exports = mongoose.model('PhoneVerificationCode', phoneverificationcodeSchema));
 
 // Create Phone Verification Code
 module.exports.create = async (verification_code) => {
     verification_code = await verification_code.save();
+    return verification_code;
+}
+
+// Get By OTP
+module.exports.getByOTP = async (otp) => {
+    var verification_code = await PhoneVerification.findOne({
+        otp: otp
+    });
+    return verification_code;
+}
+
+// Delete By Id
+module.exports.deleteByPhoneVerificationCodeId = async (verification_code) => {
+    var verification_code = await PhoneVerification.findByIdAndDelete(verification_code._id);
     return verification_code;
 }

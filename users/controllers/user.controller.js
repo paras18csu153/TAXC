@@ -1,6 +1,7 @@
 const axios = require('axios');
 const PasswordHash = require('password-hash');
 
+const PhoneVerification = require('../models/phoneVerification.model');
 const User = require('../models/user.model');
 
 const hashString = require('../helpers/hashString');
@@ -17,13 +18,13 @@ exports.register = async (req, res) => {
 
     // Check if user already exists
     try {
-        var existingUser = await User.getByUsernamePhoneEmail(user);
-        if (!!existingUser) {
-            if (existingUser.username == user.username) {
+        var existing_user = await User.getByUsernamePhoneEmail(user);
+        if (!!existing_user) {
+            if (existing_user.username == user.username) {
                 return res.status(409).send({
                     message: 'Username already exists.'
                 });
-            } else if (existingUser.email == user.email) {
+            } else if (existing_user.email == user.email) {
                 return res.status(409).send({
                     message: 'Email already exists.'
                 });
@@ -33,7 +34,7 @@ exports.register = async (req, res) => {
                 });
             }
         }
-    } catch (e) {
+    } catch (err) {
         return res.status(500).send({
             message: 'Internal Server Error.'
         });
@@ -42,7 +43,7 @@ exports.register = async (req, res) => {
     // Save User
     try {
         user = await User.create(user);
-    } catch (e) {
+    } catch (err) {
         if (!!e.errors) {
             var errors = Object.values(e.errors);
             return res.status(400).send({
@@ -114,31 +115,31 @@ exports.login = async (req, res) => {
         });
     }
 
-    // Check if user already exists
+    // Check if user doesn't exist
     try {
-        var existingUser = await User.getByUsernamePhoneEmail(user);
-        if (!!!existingUser) {
+        var existing_user = await User.getByUsernamePhoneEmail(user);
+        if (!!!existing_user) {
             return res.status(404).send({
                 message: 'User not found.'
             });
         }
-    } catch (e) {
+    } catch (err) {
         return res.status(500).send({
             message: 'Internal Server Error.'
         });
     }
 
     // Check Login Credentials
-    if (!PasswordHash.verify(user.password, existingUser.password)) {
+    if (!PasswordHash.verify(user.password, existing_user.password)) {
         return res.status(401).send({
             message: 'Unauthorized Access.'
         });
     }
 
-    if (!existingUser.phoneVerified) {
+    if (!existing_user.phoneVerified) {
         // Send Verification Message
         try {
-            sendOtpToPhone(existingUser);
+            sendOtpToPhone(existing_user);
         } catch (err) {
             return res.status(500).send({
                 message: 'Internal Server Error.',
@@ -146,11 +147,11 @@ exports.login = async (req, res) => {
         }
     }
 
-    if (!existingUser.emailVerified) {
+    if (!existing_user.emailVerified) {
         // Send Verification Mail
         try {
             var host_url = req.protocol + '://' + req.get('host') + '/users';
-            sendVerificationMail(host_url, existingUser);
+            sendVerificationMail(host_url, existing_user);
         } catch (err) {
             return res.status(500).send({
                 message: 'Internal Server Error.',
@@ -161,7 +162,7 @@ exports.login = async (req, res) => {
     // Request for Token Service
     var req_body = {
         'secret': secret,
-        'username': existingUser.username
+        'username': existing_user.username
     }
 
     // Hash Secret
@@ -177,10 +178,55 @@ exports.login = async (req, res) => {
     var token = token_service.data.token;
 
     res.header('authorization', token);
-    return res.status(200).send(existingUser);
+    return res.status(200).send(existing_user);
 }
 
 // Verify Phone Number
 exports.verifyPhone = async (req, res) => {
+    var phone_verification_code = req.body;
 
+    if (!phone_verification_code.otp) {
+        return res.status(400).send({
+            message: 'Username is required.'
+        });
+    }
+
+    try {
+        var existing_phone_verification_code = await PhoneVerification.getByOTP(phone_verification_code.otp);
+        if (!!!existing_phone_verification_code) {
+            return res.status(404).send({
+                message: 'Invalid OTP.'
+            });
+        }
+
+        if (Date.now() - existing_phone_verification_code.createdAt >= 600000) {
+            return res.status(400).send({
+                message: 'Invalid OTP.'
+            });
+        }
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.',
+        });
+    }
+
+    // Check User and Update
+    try {
+        var existing_user = await User.verifyPhone(phone_verification_code.username);
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    }
+
+    // Delete Verification Code
+    try {
+        existing_phone_verification_code = await PhoneVerification.deleteByPhoneVerificationCodeId(existing_phone_verification_code);
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    }
+
+    return res.status(200).send(existing_user);
 }

@@ -109,3 +109,17 @@ module.exports.getByUsernamePhoneEmail = async (user) => {
     });
     return user;
 }
+
+// Check User and Update
+module.exports.verifyPhone = async (username) => {
+    var user = await User.findOneAndUpdate({
+        username: username
+    }, {
+        $set: {
+            phoneVerified: true
+        }
+    }, {
+        new: true
+    });
+    return user;
+}

@@ -30,7 +30,7 @@ exports.create = async (req, res) => {
     // Validate Token
     try {
         validatedToken = await Token.validate(token);
-    } catch (e) {
+    } catch (err) {
         if (!!e.errors) {
             var errors = Object.values(e.errors);
             return res.status(400).send({
@@ -45,19 +45,19 @@ exports.create = async (req, res) => {
 
     // Check if token already exists
     try {
-        var existingToken = await Token.getTokenByUserId(token);
-        if (!!existingToken) {
-            existingToken.token = token.token;
+        var existing_token = await Token.getTokenByUserId(token);
+        if (!!existing_token) {
+            existing_token.token = token.token;
             try {
-                existingToken = await Token.updateTokenByUserId(existingToken);
-            } catch (e) {
+                existing_token = await Token.updateTokenByUserId(existing_token);
+            } catch (err) {
                 return res.status(500).send({
                     message: 'Internal Server Error.'
                 });
             }
-            return res.status(200).send(existingToken);
+            return res.status(200).send(existing_token);
         }
-    } catch (e) {
+    } catch (err) {
         return res.status(500).send({
             message: 'Internal Server Error.'
         });
@@ -66,7 +66,7 @@ exports.create = async (req, res) => {
     // Save Token
     try {
         token = await Token.create(token);
-    } catch (e) {
+    } catch (err) {
         if (!!e.errors) {
             var errors = Object.values(e.errors);
             return res.status(400).send({
@@ -112,19 +112,19 @@ exports.authorize = async (req, res) => {
 
     // Find Token By token
     try {
-        var existingToken = await Token.getTokenByToken(token);
-        if (!!!existingToken) {
+        var existing_token = await Token.getTokenByToken(token);
+        if (!!!existing_token) {
             return res.status(401).send({
                 message: 'Unauthorized Access.'
             });
         }
-    } catch (e) {
+    } catch (err) {
         return res.status(500).send({
             message: 'Internal Server Error.'
         });
     }
 
-    var validatedToken = tokenValidator(existingToken.token, secret);
+    var validatedToken = tokenValidator(existing_token.token, secret);
 
     if (!validatedToken) {
         return res.status(401).send({
@@ -138,5 +138,5 @@ exports.authorize = async (req, res) => {
         });
     }
 
-    return res.status(200).send(existingToken);
+    return res.status(200).send(existing_token);
 }
