@@ -85,7 +85,7 @@ exports.register = async (req, res) => {
     req_body.secret = hashString(req_body.secret);
 
     // Token Genration
-    var token_service = await axios.post(token_service_url, req_body).catch((err) => {
+    var token_service = await axios.put(token_service_url, req_body).catch((err) => {
         return res.status(500).send({
             message: 'Internal Server Error.'
         });
@@ -169,7 +169,7 @@ exports.login = async (req, res) => {
     req_body.secret = hashString(req_body.secret);
 
     // Token Genration
-    var token_service = await axios.post(token_service_url, req_body).catch((err) => {
+    var token_service = await axios.put(token_service_url, req_body).catch((err) => {
         return res.status(500).send({
             message: 'Internal Server Error.'
         });
@@ -207,6 +207,36 @@ exports.verifyPhone = async (req, res) => {
     } catch (err) {
         return res.status(500).send({
             message: 'Internal Server Error.',
+        });
+    }
+
+    var user = {
+        username: phone_verification_code.username
+    };
+
+    // Check if user doesn't exist
+    try {
+        var existing_user = await User.getByUsernamePhoneEmail(user);
+        if (!!!existing_user) {
+            return res.status(404).send({
+                message: 'User not found.'
+            });
+        }
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    }
+
+    if (existing_user.phoneVerified) {
+        return res.status(409).send({
+            message: 'User phone already verified.'
+        });
+    }
+
+    if (existing_phone_verification_code.phone != existing_user.phone) {
+        return res.status(400).send({
+            message: 'Invalid OTP.'
         });
     }
 

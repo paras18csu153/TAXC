@@ -11,6 +11,6 @@ router.post('/register', user_controller.register);
 router.post('/', user_controller.login);
 
 /* Verify Phone. */
-router.post('/verifyPhone', auth, user_controller.verifyPhone);
+router.patch('/verifyPhone', auth, user_controller.verifyPhone);
 
 module.exports = router;
