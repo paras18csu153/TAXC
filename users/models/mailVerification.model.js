@@ -18,10 +18,27 @@ module.exports.create = async (verification_code) => {
     return verification_code;
 }
 
+// Get By Verification Link
+module.exports.getByVerificationLink = async (verification_link) => {
+    var verification_code = await MailVerification.findOne({
+        verification_link: verification_link
+    });
+    return verification_code;
+}
+
+
 // Find Verfication Link
-module.exportsfindByVerificationLink = async (verification_link) => {
+module.exports.findByVerificationLink = async (verification_link) => {
     verification_code = await MailVerification.findOne({
         verification_link: verification_link
+    });
+    return verification_code;
+}
+
+// Delete By Verification Link
+module.exports.deleteAllByVerificationLink = async (verification_code) => {
+    var verification_code = await MailVerification.deleteMany({
+        verification_link: verification_code.verification_link
     });
     return verification_code;
 }

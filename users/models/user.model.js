@@ -123,3 +123,17 @@ module.exports.verifyPhone = async (username) => {
     });
     return user;
 }
+
+// Check User and Update
+module.exports.verifyMail = async (username) => {
+    var user = await User.findOneAndUpdate({
+        username: username
+    }, {
+        $set: {
+            emailVerified: true
+        }
+    }, {
+        new: true
+    });
+    return user;
+}

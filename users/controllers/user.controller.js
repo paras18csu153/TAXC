@@ -1,6 +1,7 @@
 const axios = require('axios');
 const PasswordHash = require('password-hash');
 
+const MailVerification = require('../models/mailVerification.model');
 const PhoneVerification = require('../models/phoneVerification.model');
 const User = require('../models/user.model');
 
@@ -252,6 +253,80 @@ exports.verifyPhone = async (req, res) => {
     // Delete Verification Code
     try {
         existing_phone_verification_code = await PhoneVerification.deleteAllByPhone(existing_phone_verification_code.phone);
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    }
+
+    return res.status(200).send(existing_user);
+}
+
+// Verify Mail
+exports.verifyMail = async (req, res) => {
+    var mail_verification_code = req.params["verification_link"];
+
+    try {
+        var existing_mail_verification_code = await MailVerification.getByVerificationLink(mail_verification_code);
+        if (!!!existing_mail_verification_code) {
+            return res.status(404).send({
+                message: 'Invalid Verification Link.'
+            });
+        }
+
+        if (Date.now() - existing_mail_verification_code.createdAt >= 86400000) {
+            return res.status(400).send({
+                message: 'Invalid Verification Link.'
+            });
+        }
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.',
+        });
+    }
+
+    var user = {
+        username: req.body.username
+    };
+
+    // Check if user doesn't exist
+    try {
+        var existing_user = await User.getByUsernamePhoneEmail(user);
+        if (!!!existing_user) {
+            return res.status(404).send({
+                message: 'User not found.'
+            });
+        }
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    }
+
+    if (existing_user.emailVerified) {
+        return res.status(409).send({
+            message: 'User email already verified.'
+        });
+    }
+
+    if (existing_mail_verification_code.verification_link != hashString(req.body.username)) {
+        return res.status(400).send({
+            message: 'Invalid Verification Link.'
+        });
+    }
+
+    // Check User and Update
+    try {
+        var existing_user = await User.verifyMail(req.body.username);
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    }
+
+    // Delete Verification Code
+    try {
+        existing_mail_verification_code = await MailVerification.deleteAllByVerificationLink(existing_mail_verification_code);
     } catch (err) {
         return res.status(500).send({
             message: 'Internal Server Error.'

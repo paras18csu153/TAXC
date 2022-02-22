@@ -13,4 +13,7 @@ router.post('/', user_controller.login);
 /* Verify Phone. */
 router.patch('/verifyPhone', auth, user_controller.verifyPhone);
 
+/* Verify Mail. */
+router.patch('/verifyMail/:verification_link', auth, user_controller.verifyMail);
+
 module.exports = router;
