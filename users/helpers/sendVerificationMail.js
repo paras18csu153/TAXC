@@ -5,7 +5,7 @@ var MailVerificationCode = require('../models/mailVerification.model');
 const hashString = require('./hashString');
 
 // async..await is not allowed in global scope, must use a wrapper
-async function sendVerificationMail(user) {
+async function sendVerificationMail(host_url, user) {
     var transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -15,7 +15,7 @@ async function sendVerificationMail(user) {
     });
 
     var hash = hashString(user.username);
-    var verification_link = process.env.USER_SERVICE_URL + '/verify/' + hash;
+    var verification_link = host_url + '/verify/' + hash;
 
     // send mail with defined transport object
     let info = await transporter.sendMail({

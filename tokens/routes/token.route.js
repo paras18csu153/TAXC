@@ -6,4 +6,7 @@ const token_controller = require('../controllers/token.controller');
 /* Create Token. */
 router.post('/', token_controller.create);
 
+/* Authorize User. */
+router.post('/authorize', token_controller.authorize);
+
 module.exports = router;

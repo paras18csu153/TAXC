@@ -30,7 +30,7 @@ async function sendOtpToPhone(user) {
         });
 
         verification_code = await PhoneVerificationCode.create(verification_code);
-        console.log('Redirecting to verification page!!');
+        console.log('Redirecting to verification page...');
     }
 }
 

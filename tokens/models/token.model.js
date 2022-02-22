@@ -9,11 +9,6 @@ let tokenSchema = new Schema({
     token: {
         type: String,
         required: [true, 'Token is required.']
-    },
-    user_id: {
-        type: ObjectId,
-        ref: 'User',
-        required: [true, 'User Id is required.']
     }
 });
 
@@ -29,6 +24,14 @@ module.exports.create = async (token) => {
 module.exports.getTokenByUserId = async (token) => {
     token = await Token.findOne({
         user_id: token.user_id
+    });
+    return token;
+}
+
+// Find token by token
+module.exports.getTokenByToken = async (token) => {
+    token = await Token.findOne({
+        token: token
     });
     return token;
 }

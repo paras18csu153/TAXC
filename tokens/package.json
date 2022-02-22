@@ -13,7 +13,7 @@
     "hbs": "~4.0.4",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.2.2",
+    "mongoose": "^6.2.3",
     "morgan": "~1.9.1"
   }
 }

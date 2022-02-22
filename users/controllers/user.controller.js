@@ -60,25 +60,25 @@ exports.register = async (req, res) => {
         sendOtpToPhone(user);
     } catch (err) {
         return res.status(500).send({
-            message: 'Internal Server Error!!',
+            message: 'Internal Server Error.',
         });
     }
 
     // Send Verification Mail
     try {
-        sendVerificationMail(user);
+        var host_url = req.protocol + '://' + req.get('host') + '/users';
+        sendVerificationMail(host_url, user);
     } catch (err) {
         return res.status(500).send({
-            message: 'Internal Server Error!!',
+            message: 'Internal Server Error.',
         });
     }
 
     // Request for Token Service
     var req_body = {
         'secret': secret,
-        'username': user.username,
-        'user_id': user._id
-    }
+        'username': user.username
+    };
 
     // Hash Secret
     req_body.secret = hashString(req_body.secret);
@@ -92,7 +92,7 @@ exports.register = async (req, res) => {
 
     var token = token_service.data.token;
 
-    res.header('Authorization', token);
+    res.header('authorization', token);
     return res.status(200).send(user);
 }
 
@@ -141,7 +141,7 @@ exports.login = async (req, res) => {
             sendOtpToPhone(existingUser);
         } catch (err) {
             return res.status(500).send({
-                message: 'Internal Server Error!!',
+                message: 'Internal Server Error.',
             });
         }
     }
@@ -149,10 +149,11 @@ exports.login = async (req, res) => {
     if (!existingUser.emailVerified) {
         // Send Verification Mail
         try {
-            sendVerificationMail(existingUser);
+            var host_url = req.protocol + '://' + req.get('host') + '/users';
+            sendVerificationMail(host_url, existingUser);
         } catch (err) {
             return res.status(500).send({
-                message: 'Internal Server Error!!',
+                message: 'Internal Server Error.',
             });
         }
     }
@@ -160,8 +161,7 @@ exports.login = async (req, res) => {
     // Request for Token Service
     var req_body = {
         'secret': secret,
-        'username': existingUser.username,
-        'user_id': existingUser._id
+        'username': existingUser.username
     }
 
     // Hash Secret
@@ -176,6 +176,11 @@ exports.login = async (req, res) => {
 
     var token = token_service.data.token;
 
-    res.header('Authorization', token);
+    res.header('authorization', token);
     return res.status(200).send(existingUser);
+}
+
+// Verify Phone Number
+exports.verifyPhone = async (req, res) => {
+
 }

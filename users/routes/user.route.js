@@ -9,4 +9,7 @@ router.post('/register', user_controller.register);
 /* User Login. */
 router.post('/', user_controller.login);
 
+/* Verify Phone. */
+router.post('/verifyPhone', user_controller.verifyPhone);
+
 module.exports = router;
