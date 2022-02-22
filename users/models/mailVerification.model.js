@@ -26,7 +26,6 @@ module.exports.getByVerificationLink = async (verification_link) => {
     return verification_code;
 }
 
-
 // Find Verfication Link
 module.exports.findByVerificationLink = async (verification_link) => {
     verification_code = await MailVerification.findOne({
@@ -42,3 +41,14 @@ module.exports.deleteAllByVerificationLink = async (verification_code) => {
     });
     return verification_code;
 }
+
+// Delete Invalid Verification Links
+module.exports.deleteAllByTime = async (timestamp) => {
+    timestamp = timestamp - 86400000;
+    var verification = await MailVerification.deleteMany({
+        createdAt: {
+            $lt: timestamp
+        },
+    });
+    return verification;
+};

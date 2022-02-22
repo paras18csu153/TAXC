@@ -10,6 +10,10 @@ require('dotenv').config();
 const db = require('./db/db');
 db();
 
+// Run Job
+const scheduler = require("./schedule/scheduler");
+scheduler();
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/user.route');
 

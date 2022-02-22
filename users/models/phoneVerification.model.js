@@ -50,3 +50,14 @@ module.exports.deleteAllByPhone = async (phone) => {
     });
     return verification_code;
 }
+
+// Delete Invalid OTPs
+module.exports.deleteAllByTime = async (timestamp) => {
+    timestamp = timestamp - 600000;
+    var verification = PhoneVerification.deleteMany({
+        createdAt: {
+            $lt: timestamp
+        },
+    });
+    return verification;
+};
