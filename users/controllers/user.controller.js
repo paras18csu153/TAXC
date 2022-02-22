@@ -251,7 +251,7 @@ exports.verifyPhone = async (req, res) => {
 
     // Delete Verification Code
     try {
-        existing_phone_verification_code = await PhoneVerification.deleteByPhoneVerificationCodeId(existing_phone_verification_code);
+        existing_phone_verification_code = await PhoneVerification.deleteAllByPhone(existing_phone_verification_code.phone);
     } catch (err) {
         return res.status(500).send({
             message: 'Internal Server Error.'

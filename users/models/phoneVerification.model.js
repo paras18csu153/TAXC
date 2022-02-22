@@ -44,7 +44,9 @@ module.exports.getByOTP = async (otp) => {
 }
 
 // Delete By Id
-module.exports.deleteByPhoneVerificationCodeId = async (verification_code) => {
-    var verification_code = await PhoneVerification.findByIdAndDelete(verification_code._id);
+module.exports.deleteAllByPhone = async (phone) => {
+    var verification_code = await PhoneVerification.deleteMany({
+        phone: phone
+    });
     return verification_code;
 }
