@@ -335,3 +335,20 @@ exports.verifyMail = async (req, res) => {
 
     return res.status(200).send(existing_user);
 }
+
+exports.logout = async (req, res) => {
+    // Set Header
+    axios.defaults.headers.common['authorization'] = req.headers['authorization'];
+
+    // Token Deletion if verified
+    var token_service = await axios.delete(token_service_url).catch((err) => {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    });
+
+    // Return Logged out successfully
+    return res.status(200).send({
+        message: "Logged Out Successfully!!"
+    });
+};

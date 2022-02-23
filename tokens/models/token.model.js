@@ -45,3 +45,11 @@ module.exports.updateTokenByUserId = async (token) => {
     });
     return token;
 }
+
+// Delete token by Token
+module.exports.deleteByToken = async (tokenName) => {
+    token = await Token.findOneAndDelete({
+        token: tokenName,
+    });
+    return token;
+};

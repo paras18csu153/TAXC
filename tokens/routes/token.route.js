@@ -7,6 +7,9 @@ const token_controller = require('../controllers/token.controller');
 router.put('/', token_controller.create);
 
 /* Authorize User. */
-router.post('/authorize', token_controller.authorize);
+router.post('/', token_controller.authorize);
+
+/* Delete User. */
+router.delete('/', token_controller.delete);
 
 module.exports = router;

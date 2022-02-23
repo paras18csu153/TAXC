@@ -140,3 +140,17 @@ exports.authorize = async (req, res) => {
 
     return res.status(200).send(existing_token);
 }
+
+// Delete Token
+exports.delete = async (req, res) => {
+    try {
+        var token = await Token.deleteByToken(req.headers['authorization']);
+    } catch (err) {
+        return res.status(500).send({
+            message: "Internal Server Error!!",
+        });
+    }
+
+    // Return Logged out successfully
+    return res.status(200).send(token);
+}

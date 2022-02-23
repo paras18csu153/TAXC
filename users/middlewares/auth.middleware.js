@@ -37,7 +37,7 @@ module.exports = async function (req, res, next) {
     axios.defaults.headers.common['authorization'] = token;
 
     // Token Genration
-    var token_service = await axios.post(token_service_url + '/authorize', req_body).catch((err) => {
+    var token_service = await axios.post(token_service_url, req_body).catch((err) => {
         return res.status(500).send({
             message: 'Internal Server Error.'
         });
