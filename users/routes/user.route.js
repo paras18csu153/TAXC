@@ -16,6 +16,9 @@ router.patch('/verifyPhone', auth, user_controller.verifyPhone);
 /* Verify Mail. */
 router.post('/verifyMail/:verification_link', auth, user_controller.verifyMail);
 
+/* User Login. */
+router.get('/:username', user_controller.getMyprofile);
+
 /* User Logout. */
 router.post('/logout', auth, user_controller.logout);
 

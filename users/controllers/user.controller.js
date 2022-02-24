@@ -336,6 +336,31 @@ exports.verifyMail = async (req, res) => {
     return res.status(200).send(existing_user);
 }
 
+// Get My Profile
+exports.getMyprofile = async (req, res) => {
+    var username = req.params['username'];
+
+    var user = {
+        username: username
+    };
+
+    // Check if user doesn't exist
+    try {
+        var existing_user = await User.getByUsernamePhoneEmail(user);
+        if (!!!existing_user) {
+            return res.status(404).send({
+                message: 'User not found.'
+            });
+        }
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    }
+
+    return res.status(200).send(existing_user);
+}
+
 exports.logout = async (req, res) => {
     // Set Header
     axios.defaults.headers.common['authorization'] = req.headers['authorization'];

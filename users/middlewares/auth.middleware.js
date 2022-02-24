@@ -11,9 +11,13 @@ module.exports = async function (req, res, next) {
 
     // Data Validation
     if (!username) {
-        return res.status(400).send({
-            message: 'Username cannot be empty.'
-        });
+        if (!req.params['username']) {
+            return res.status(400).send({
+                message: 'Username cannot be empty.'
+            });
+        }
+
+        username = req.params['username'];
     }
 
     // Get Token From Header
