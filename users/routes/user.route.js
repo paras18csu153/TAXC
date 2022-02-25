@@ -22,6 +22,12 @@ router.get('/:username', user_controller.getMyprofile);
 /* Change Password. */
 router.patch('/changePassword', auth, user_controller.changePassword);
 
+/* Forgot Password Message. */
+router.post('/forgetPasswordMessage', user_controller.forgotPasswordMessage);
+
+/* Forgot Password. */
+router.patch('/forgetPassword', user_controller.forgotPassword);
+
 /* User Logout. */
 router.post('/logout', auth, user_controller.logout);
 

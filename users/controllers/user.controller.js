@@ -2,11 +2,13 @@ const axios = require('axios');
 const PasswordHash = require('password-hash');
 
 const MailVerification = require('../models/mailVerification.model');
+const ForgetPasswordOTP = require('../models/forgetPasswordOTP.model');
 const PhoneVerification = require('../models/phoneVerification.model');
 const User = require('../models/user.model');
 
 const hashString = require('../helpers/hashString');
 const sendOtpToPhone = require('../helpers/sendOTPToPhone');
+const sendOtpToPhoneForPassword = require('../helpers/sendOTPToPhoneForPassword');
 const sendVerificationMail = require('../helpers/sendVerificationMail');
 
 const secret = process.env.SECRET;
@@ -188,7 +190,7 @@ exports.verifyPhone = async (req, res) => {
 
     if (!phone_verification_code.otp) {
         return res.status(400).send({
-            message: 'Username is required.'
+            message: 'OTP is required.'
         });
     }
 
@@ -403,14 +405,134 @@ exports.changePassword = async (req, res) => {
     // Change current password
     existing_user.password = user.password;
 
-    // Check if user doesn't exist
+    // Change Password
     try {
         existing_user = await User.changePassword(existing_user);
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    }
+
+    return res.status(200).send(existing_user);
+}
+
+// Forgot Password Message
+exports.forgotPasswordMessage = async (req, res) => {
+    // Convert request body to user
+    var user = req.body;
+
+    // Data Validation
+    if (!user.username) {
+        return res.status(400).send({
+            message: 'Username is required.'
+        });
+    }
+
+    if (!user.phone) {
+        return res.status(400).send({
+            message: 'Email is required.'
+        });
+    }
+
+    // Check if user doesn't exist
+    try {
+        var existing_user = await User.getByUsernameAndPhone(user);
         if (!!!existing_user) {
             return res.status(404).send({
                 message: 'User not found.'
             });
         }
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    }
+
+    // Send Verification Message
+    try {
+        sendOtpToPhoneForPassword(existing_user);
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.',
+        });
+    }
+
+    res.status(200).send({
+        "message": "Forgot Password Message Successfully Sent!!"
+    });
+}
+
+// Forgot Password
+exports.forgotPassword = async (req, res) => {
+    // Convert request body to user
+    var user = req.body;
+
+    if (!user.username) {
+        return res.status(400).send({
+            message: 'Username is required.'
+        });
+    }
+
+    if (!user.otp) {
+        return res.status(400).send({
+            message: 'OTP is required.'
+        });
+    }
+
+    if (!user.password) {
+        return res.status(400).send({
+            message: 'Password is required.'
+        });
+    }
+
+    try {
+        var existing_phone_verification_code = await ForgetPasswordOTP.getByOTP(user.otp);
+        if (!!!existing_phone_verification_code) {
+            return res.status(404).send({
+                message: 'Invalid OTP.'
+            });
+        }
+
+        if (Date.now() - existing_phone_verification_code.createdAt >= 600000) {
+            return res.status(400).send({
+                message: 'Invalid OTP.'
+            });
+        }
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.',
+        });
+    }
+
+    // Check if user doesn't exist
+    try {
+        var existing_user = await User.getByUsernamePhoneEmail(user);
+        if (!!!existing_user) {
+            return res.status(404).send({
+                message: 'User not found.'
+            });
+        }
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    }
+
+    existing_user.password = user.password;
+
+    // Change Password
+    try {
+        existing_user = await User.changePassword(existing_user);
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    }
+
+    // Delete Verification Code
+    try {
+        existing_phone_verification_code = await ForgetPasswordOTP.deleteAllByPhone(existing_phone_verification_code.phone);
     } catch (err) {
         return res.status(500).send({
             message: 'Internal Server Error.'

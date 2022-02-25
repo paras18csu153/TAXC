@@ -3,7 +3,7 @@ const otpGenerator = require('otp-generator');
 var PhoneVerificationCode = require('../models/phoneVerification.model');
 
 async function sendOtpToPhone(user) {
-    if (!user.verified) {
+    if (!user.phoneVerified) {
         var r = otpGenerator.generate(6, {
             digits: true,
             lowerCaseAlphabets: false,

@@ -89,6 +89,7 @@ userSchema.pre('save', function (next) {
 });
 
 userSchema.pre('findOneAndUpdate', function (next) {
+    console.log(this._update['$set'].password);
     // Hash Password
     this._update['$set'].password = PasswordHash.generate(this._update['$set'].password);
     next();
@@ -112,6 +113,18 @@ module.exports.getByUsernamePhoneEmail = async (user) => {
             phone: user.phone
         }, {
             email: user.email
+        }]
+    });
+    return user;
+}
+
+// Find user by username, phone and email
+module.exports.getByUsernameAndPhone = async (user) => {
+    user = await User.findOne({
+        $and: [{
+            username: user.username
+        }, {
+            phone: user.phone
         }]
     });
     return user;
