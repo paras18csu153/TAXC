@@ -14,6 +14,7 @@ router.post('/', user_controller.login);
 router.patch('/verifyPhone', auth, user_controller.verifyPhone);
 
 /* Verify Mail. */
+Jsuut inc crease commit
 router.post('/verifyMail/:verification_link', auth, user_controller.verifyMail);
 
 /* Get My Profile. */
