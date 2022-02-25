@@ -88,6 +88,15 @@ userSchema.pre('save', function (next) {
     next();
 });
 
+userSchema.pre('findOneAndUpdate', function (next) {
+    console.log(this._update['$set'].password);
+
+    // Hash Password
+    this._update['$set'].password = PasswordHash.generate(this._update['$set'].password);
+    next();
+});
+
+
 var User = (module.exports = mongoose.model('User', userSchema));
 
 // Create User
@@ -132,6 +141,16 @@ module.exports.verifyMail = async (username) => {
         $set: {
             emailVerified: true
         }
+    }, {
+        new: true
+    });
+    return user;
+}
+
+// Check User and Update
+module.exports.changePassword = async (user) => {
+    user = await User.findByIdAndUpdate(user._id, {
+        $set: user
     }, {
         new: true
     });

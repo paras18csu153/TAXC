@@ -361,6 +361,66 @@ exports.getMyprofile = async (req, res) => {
     return res.status(200).send(existing_user);
 }
 
+// Change Password
+exports.changePassword = async (req, res) => {
+    // Convert request body to user
+    var user = req.body;
+
+    // Data Validation
+    if (!user.oldPassword) {
+        return res.status(400).send({
+            message: 'Old Password is required.'
+        });
+    }
+
+    if (!user.password) {
+        return res.status(400).send({
+            message: 'Password is required.'
+        });
+    }
+
+    // Check if user doesn't exist
+    try {
+        var existing_user = await User.getByUsernamePhoneEmail(user);
+        if (!!!existing_user) {
+            return res.status(404).send({
+                message: 'User not found.'
+            });
+        }
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    }
+
+    // Check Login Credentials
+    if (!PasswordHash.verify(user.oldPassword, existing_user.password)) {
+        return res.status(401).send({
+            message: 'Unauthorized Access.'
+        });
+    }
+
+    // Change current password
+    existing_user.password = user.password;
+
+    // Check if user doesn't exist
+    try {
+        existing_user = await User.changePassword(existing_user);
+        if (!!!existing_user) {
+            return res.status(404).send({
+                message: 'User not found.'
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    }
+
+    return res.status(200).send(existing_user);
+}
+
 exports.logout = async (req, res) => {
     // Set Header
     axios.defaults.headers.common['authorization'] = req.headers['authorization'];
