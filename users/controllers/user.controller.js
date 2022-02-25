@@ -1,8 +1,8 @@
 const axios = require('axios');
 const PasswordHash = require('password-hash');
 
-const MailVerification = require('../models/mailVerification.model');
 const ForgetPasswordOTP = require('../models/forgetPasswordOTP.model');
+const MailVerification = require('../models/mailVerification.model');
 const PhoneVerification = require('../models/phoneVerification.model');
 const User = require('../models/user.model');
 
