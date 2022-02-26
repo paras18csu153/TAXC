@@ -17,7 +17,10 @@ router.patch('/verifyPhone', auth, user_controller.verifyPhone);
 router.post('/verifyMail/:verification_link', auth, user_controller.verifyMail);
 
 /* Get My Profile. */
-router.get('/:username', user_controller.getMyprofile);
+router.get('/:username', auth, user_controller.getMyprofile);
+
+/* Get Profile Phone Verified. */
+router.get('/:username/isPhoneVerified', user_controller.getProfileVerified);
 
 /* Change Password. */
 router.patch('/changePassword', auth, user_controller.changePassword);

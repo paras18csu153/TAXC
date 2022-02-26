@@ -363,6 +363,33 @@ exports.getMyprofile = async (req, res) => {
     return res.status(200).send(existing_user);
 }
 
+// Get Profile Phone Verified
+exports.getProfileVerified = async (req, res) => {
+    var username = req.params['username'];
+
+    var user = {
+        username: username
+    };
+
+    // Check if user doesn't exist
+    try {
+        var existing_user = await User.getByUsernamePhoneEmail(user);
+        if (!!!existing_user) {
+            return res.status(404).send({
+                message: 'User not found.'
+            });
+        }
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    }
+
+    return res.status(200).send({
+        "isPhoneVerified": existing_user.phoneVerified
+    });
+}
+
 // Change Password
 exports.changePassword = async (req, res) => {
     // Convert request body to user
