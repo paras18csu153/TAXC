@@ -11,7 +11,7 @@ const db = require('./db/db');
 db();
 
 // Run Job
-const scheduler = require("./schedule/scheduler");
+const scheduler = require('./schedule/scheduler');
 scheduler();
 
 var indexRouter = require('./routes/index');

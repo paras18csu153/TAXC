@@ -128,13 +128,13 @@ exports.authorize = async (req, res) => {
 
     if (!validatedToken) {
         return res.status(401).send({
-            message: 'Unauthorized Access!!'
+            message: 'Unauthorized Access.'
         });
     }
 
     if (validatedToken != username) {
         return res.status(401).send({
-            message: 'Unauthorized Access!!'
+            message: 'Unauthorized Access.'
         });
     }
 
@@ -147,7 +147,7 @@ exports.delete = async (req, res) => {
         var token = await Token.deleteByToken(req.headers['authorization']);
     } catch (err) {
         return res.status(500).send({
-            message: "Internal Server Error!!",
+            message: 'Internal Server Error.',
         });
     }
 

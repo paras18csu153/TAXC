@@ -42,8 +42,8 @@ module.exports = async function (req, res, next) {
 
     // Token Genration
     var token_service = await axios.post(token_service_url, req_body).catch((err) => {
-        return res.status(500).send({
-            message: 'Internal Server Error.'
+        return res.status(err.response.status).send({
+            message: err.response.data.message
         });
     });
 

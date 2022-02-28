@@ -266,7 +266,7 @@ exports.verifyPhone = async (req, res) => {
 
 // Verify Mail
 exports.verifyMail = async (req, res) => {
-    var mail_verification_code = req.params["verification_link"];
+    var mail_verification_code = req.params['verification_link'];
 
     try {
         var existing_mail_verification_code = await MailVerification.getByVerificationLink(mail_verification_code);
@@ -386,7 +386,7 @@ exports.getProfileVerified = async (req, res) => {
     }
 
     return res.status(200).send({
-        "isPhoneVerified": existing_user.phoneVerified
+        'isPhoneVerified': existing_user.phoneVerified
     });
 }
 
@@ -486,7 +486,7 @@ exports.forgotPasswordMessage = async (req, res) => {
     }
 
     res.status(200).send({
-        "message": "Forgot Password Message Successfully Sent!!"
+        'message': 'Forgot Password Message Successfully Sent.'
     });
 }
 
@@ -582,6 +582,6 @@ exports.logout = async (req, res) => {
 
     // Return Logged out successfully
     return res.status(200).send({
-        message: "Logged Out Successfully!!"
+        message: 'Logged Out Successfully.'
     });
 };

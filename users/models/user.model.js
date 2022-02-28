@@ -89,7 +89,6 @@ userSchema.pre('save', function (next) {
 });
 
 userSchema.pre('findOneAndUpdate', function (next) {
-    console.log(this._update['$set'].password);
     // Hash Password
     this._update['$set'].password = PasswordHash.generate(this._update['$set'].password);
     next();
