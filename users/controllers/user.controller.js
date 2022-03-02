@@ -1,4 +1,5 @@
 const axios = require('axios');
+const formidable = require('formidable');
 const PasswordHash = require('password-hash');
 
 const ForgetPasswordOTP = require('../models/forgetPasswordOTP.model');
@@ -98,6 +99,30 @@ exports.register = async (req, res) => {
 
     res.header('authorization', token);
     return res.status(200).send(user);
+}
+
+// Make Avatar
+exports.avatar = async (req, res) => {
+    const form = formidable({
+        filename: (name, ext) => {
+            return req.params['username'] + ext;
+        },
+        keepExtensions: true,
+        multiples: false,
+        uploadDir: 'uploads/'
+    });
+
+    form.parse(req, (err, fields, files) => {
+        if (err) {
+            return res.status(409).send({
+                message: 'Some error occured.'
+            });
+        }
+
+        return res.status(200).send({
+            message: 'File Uploaded Successfully.'
+        });
+    });
 }
 
 // User Login

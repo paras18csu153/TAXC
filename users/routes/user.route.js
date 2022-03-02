@@ -7,6 +7,9 @@ const user_controller = require('../controllers/user.controller');
 /* Create User. */
 router.post('/register', user_controller.register);
 
+/* Make Avatar. */
+router.put('/:username/avatar', auth, user_controller.avatar);
+
 /* User Login. */
 router.post('/', user_controller.login);
 

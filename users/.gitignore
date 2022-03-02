@@ -6,3 +6,6 @@ db/*
 
 # Env
 .env
+
+# Upload Files
+uploads/*
