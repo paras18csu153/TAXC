@@ -31,8 +31,8 @@ exports.create = async (req, res) => {
     try {
         validatedToken = await Token.validate(token);
     } catch (err) {
-        if (!!e.errors) {
-            var errors = Object.values(e.errors);
+        if (!!err.errors) {
+            var errors = Object.values(err.errors);
             return res.status(400).send({
                 message: errors[errors.length - 1].properties.message
             });
@@ -67,8 +67,8 @@ exports.create = async (req, res) => {
     try {
         token = await Token.create(token);
     } catch (err) {
-        if (!!e.errors) {
-            var errors = Object.values(e.errors);
+        if (!!err.errors) {
+            var errors = Object.values(err.errors);
             return res.status(400).send({
                 message: errors[errors.length - 1].properties.message
             });

@@ -48,8 +48,8 @@ exports.register = async (req, res) => {
     try {
         user = await User.create(user);
     } catch (err) {
-        if (!!e.errors) {
-            var errors = Object.values(e.errors);
+        if (!!err.errors) {
+            var errors = Object.values(err.errors);
             return res.status(400).send({
                 message: errors[errors.length - 1].properties.message
             });
