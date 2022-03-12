@@ -1,7 +1,7 @@
 const Place = require('../models/place.model');
 
 // Create Place
-exports.create = async (req, res) => {
+exports.createOrGet = async (req, res) => {
     // Convert request body to place
     var place = req.body;
 

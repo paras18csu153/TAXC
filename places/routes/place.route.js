@@ -5,7 +5,7 @@ const auth = require('../middlewares/auth.middleware');
 const place_controller = require('../controllers/place.controller');
 
 /* Create Place. */
-router.post('/', auth, place_controller.create);
+router.post('/', auth, place_controller.createOrGet);
 
 /* Get Place. */
 router.get('/:id', place_controller.getById);
