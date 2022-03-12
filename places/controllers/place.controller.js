@@ -9,9 +9,7 @@ exports.create = async (req, res) => {
     try {
         var existing_place = await Place.getPlaceByPlace(place);
         if (!!existing_place) {
-            return res.status(409).send({
-                message: 'Place already exists.'
-            });
+            return res.status(200).send(existing_place);
         }
     } catch (err) {
         return res.status(500).send({
