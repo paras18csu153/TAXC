@@ -1,10 +1,6 @@
 const mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-const {
-    ObjectId
-} = Schema.Types;
-
 let tokenSchema = new Schema({
     token: {
         type: String,
