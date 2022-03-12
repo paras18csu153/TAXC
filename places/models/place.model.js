@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 let placeSchema = new Schema({
     name: {
         type: String,
-        required: [true, 'Place is required.']
+        required: [true, 'Place Name is required.']
     },
     latitude: {
         type: mongoose.Types.Decimal128,
@@ -27,6 +27,12 @@ module.exports.create = async (place) => {
 // Get Place
 module.exports.getPlace = async (id) => {
     var place = await Place.findById(id);
+    return place;
+}
+
+// Get Place
+module.exports.getPlaceByPlace = async (place) => {
+    place = await Place.findOne(place);
     return place;
 }
 
