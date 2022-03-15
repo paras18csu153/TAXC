@@ -415,6 +415,62 @@ exports.getProfileVerified = async (req, res) => {
     });
 }
 
+// Update Ratings
+exports.updateRatings = async (req, res) => {
+    var user = req.body;
+
+    if (!!!user.rating) {
+        return res.status(400).send({
+            message: 'Rating cannot be empty.'
+        });
+    }
+
+    // Check if user doesn't exist
+    try {
+        var existing_user = await User.getByUsernamePhoneEmail(user);
+        if (!!!existing_user) {
+            return res.status(404).send({
+                message: 'User not found.'
+            });
+        }
+    } catch (err) {
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    }
+
+    if (!!!existing_user.rated_by) {
+        existing_user.rated_by = 0;
+    }
+
+    var current_rating = existing_user.rating * existing_user.rated_by;
+    if (!!!current_rating) {
+        console.log("Here");
+        current_rating = 0;
+    }
+
+    existing_user.rated_by = existing_user.rated_by + 1;
+    existing_user.rating = (current_rating + user.rating) / (existing_user.rated_by);
+
+    console.log(current_rating);
+    console.log(!!!current_rating);
+    console.log(!current_rating);
+    console.log(existing_user.rated_by);
+    console.log(existing_user.rating);
+
+    // Check User and Update
+    try {
+        existing_user = await User.updateUser(existing_user);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).send({
+            message: 'Internal Server Error.'
+        });
+    }
+
+    return res.status(200).send(existing_user);
+}
+
 // Change Password
 exports.changePassword = async (req, res) => {
     // Convert request body to user

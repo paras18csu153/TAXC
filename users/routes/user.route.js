@@ -25,6 +25,9 @@ router.get('/:username', auth, user_controller.getMyprofile);
 /* Get Profile Phone Verified. */
 router.get('/:username/isPhoneVerified', user_controller.getProfileVerified);
 
+/* Update User Ratings. */
+router.put('/', auth, user_controller.updateRatings);
+
 /* Change Password. */
 router.patch('/changePassword', auth, user_controller.changePassword);
 

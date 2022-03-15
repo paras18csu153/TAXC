@@ -77,11 +77,20 @@ let userSchema = new Schema({
     work: {
         type: ObjectId,
         ref: 'Place'
+    },
+    rating: {
+        type: mongoose.Types.Decimal128,
+        enum: [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]
+    },
+    rated_by: {
+        type: Number
     }
 });
 
 userSchema.pre('save', function (next) {
     var user = this;
+
+    if (!user.isModified('password')) return next();
 
     // Hash Password
     user.password = PasswordHash.generate(user.password);
@@ -159,6 +168,16 @@ module.exports.verifyMail = async (username) => {
 
 // Check User and Update
 module.exports.changePassword = async (user) => {
+    user = await User.findByIdAndUpdate(user._id, {
+        $set: user
+    }, {
+        new: true
+    });
+    return user;
+}
+
+// Update User
+module.exports.updateUser = async (user) => {
     user = await User.findByIdAndUpdate(user._id, {
         $set: user
     }, {
