@@ -445,24 +445,16 @@ exports.updateRatings = async (req, res) => {
 
     var current_rating = existing_user.rating * existing_user.rated_by;
     if (!!!current_rating) {
-        console.log("Here");
         current_rating = 0;
     }
 
     existing_user.rated_by = existing_user.rated_by + 1;
     existing_user.rating = (current_rating + user.rating) / (existing_user.rated_by);
 
-    console.log(current_rating);
-    console.log(!!!current_rating);
-    console.log(!current_rating);
-    console.log(existing_user.rated_by);
-    console.log(existing_user.rating);
-
     // Check User and Update
     try {
         existing_user = await User.updateUser(existing_user);
     } catch (err) {
-        console.log(err);
         return res.status(500).send({
             message: 'Internal Server Error.'
         });
