@@ -90,8 +90,6 @@ let userSchema = new Schema({
 userSchema.pre('save', function (next) {
     var user = this;
 
-    if (!user.isModified('password')) return next();
-
     // Hash Password
     user.password = PasswordHash.generate(user.password);
     next();
@@ -99,7 +97,8 @@ userSchema.pre('save', function (next) {
 
 userSchema.pre('findOneAndUpdate', function (next) {
     // Hash Password
-    this._update['$set'].password = PasswordHash.generate(this._update['$set'].password);
+    if (!PasswordHash.isHashed(this._update['$set'].password))
+        this._update['$set'].password = PasswordHash.generate(this._update['$set'].password);
     next();
 });
 
