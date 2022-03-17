@@ -138,13 +138,10 @@ module.exports.getByUsernameAndPhone = async (user) => {
 }
 
 // Check User and Update
-module.exports.verifyPhone = async (username) => {
-    var user = await User.findOneAndUpdate({
-        username: username
-    }, {
-        $set: {
-            phoneVerified: true
-        }
+module.exports.verifyPhone = async (user) => {
+    user.phoneVerified = true;
+    var user = await User.findByIdAndUpdate(user._id, {
+        $set: user
     }, {
         new: true
     });
@@ -152,13 +149,10 @@ module.exports.verifyPhone = async (username) => {
 }
 
 // Check User and Update
-module.exports.verifyMail = async (username) => {
-    var user = await User.findOneAndUpdate({
-        username: username
-    }, {
-        $set: {
-            emailVerified: true
-        }
+module.exports.verifyMail = async (user) => {
+    user.emailVerified = true;
+    var user = await User.findByIdAndUpdate(user._id, {
+        $set: user
     }, {
         new: true
     });

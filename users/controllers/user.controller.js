@@ -270,7 +270,7 @@ exports.verifyPhone = async (req, res) => {
 
     // Check User and Update
     try {
-        var existing_user = await User.verifyPhone(phone_verification_code.username);
+        var existing_user = await User.verifyPhone(existing_user);
     } catch (err) {
         return res.status(500).send({
             message: 'Internal Server Error.'
@@ -344,7 +344,7 @@ exports.verifyMail = async (req, res) => {
 
     // Check User and Update
     try {
-        var existing_user = await User.verifyMail(req.body.username);
+        var existing_user = await User.verifyMail(existing_user);
     } catch (err) {
         return res.status(500).send({
             message: 'Internal Server Error.'
